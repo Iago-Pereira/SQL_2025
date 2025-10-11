@@ -1,0 +1,14 @@
+-- Quantos produtos são de rpg?
+
+SELECT count(*) AS produtosRPG
+
+FROM produtos
+
+WHERE DescCategoriaProduto = 'rpg';
+
+SELECT DescCategoriaProduto,
+       count(*)
+
+FROM produtos
+
+GROUP BY DescCategoriaProduto;
