@@ -33,5 +33,5 @@ tb_cliente_dias AS (
 )
 
 -- calcula a média
-SELECT avg(TotalDias) as MediaDias
+SELECT ROUND(avg(TotalDias), 2) as MediaDias
 FROM tb_cliente_dias
