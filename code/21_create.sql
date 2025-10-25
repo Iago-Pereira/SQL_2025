@@ -1,4 +1,6 @@
--- Quantidade de transações acumuladas ao longo do tempo (diário)?
+DROP TABLE IF EXISTS relatorio_diario;
+
+CREATE TABLE IF NOT EXISTS relatorio_diario AS
 
 WITH tb_diaria AS (
     SELECT substr(DtCriacao, 1, 10) AS dtDia,
@@ -7,6 +9,8 @@ WITH tb_diaria AS (
 FROM transacoes
 
 GROUP BY dtDia
+
+ORDER BY dtDia
 ),
 
 tb_acum AS (
@@ -16,14 +20,10 @@ tb_acum AS (
     FROM tb_diaria
 )
 
--- Quando atingiu 100 mil transações?
+SELECT *
 
--- SELECT *
--- FROM tb_acum
--- WHERE qtdeTransacaoAcum >= 100000
--- ORDER BY qtdeTransacaoAcum
--- LIMIT 1
+FROM tb_acum;
 
 SELECT *
 
-FROM tb_acum
+FROM relatorio_diario;
