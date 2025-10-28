@@ -182,5 +182,3 @@ SELECT *,
        1.0 * qtdeTransacao28 / qtdeTransacoesVida AS engajamento28Vida
 
 FROM tb_join
-
-WHERE engajamento28Vida > 0
