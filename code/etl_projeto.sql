@@ -1,21 +1,24 @@
 -- Quantidade de transações históricas (vida, últimos 7 dias, 14 dias, 28 dias e 56 dias)
 
+-- CREATE TABLE feature_store_cliente AS
+
 WITH tb_transacoes AS (
     SELECT IdTransacao,
            IdCliente,
            QtdePontos,
            datetime(substr(DtCriacao, 1, 19)) AS DtCriacao,
-           julianday('now') - julianday(substr(DtCriacao, 1, 10)) AS diffDate,
+           julianday('{date}') - julianday(substr(DtCriacao, 1, 10)) AS diffDate,
            CAST(strftime('%H', substr(DtCriacao, 1, 19)) AS INTEGER) AS dtHora
 
     FROM transacoes
+    WHERE dtCriacao < '{date}'
 ),
 
 -- Idade do cliente na base
 tb_cliente AS (
     SELECT IdCliente,
            datetime(substr(DtCriacao, 1, 19)) AS DtCriacao,
-           julianday('now') - julianday(substr(DtCriacao, 1, 10)) AS IdadeBase
+           julianday('{date}') - julianday(substr(DtCriacao, 1, 10)) AS IdadeBase
 
     FROM clientes
 ),
@@ -122,7 +125,7 @@ tb_cliente_periodo AS (
 
     WHERE diffDate <= 28
 
-    GROUP BY IdCliente, dtHora
+    GROUP BY IdCliente, periodo
 ),
 
 tb_cliente_periodo_rn AS (
@@ -158,15 +161,15 @@ tb_join AS (
 
     LEFT JOIN tb_cliente_produto_rn AS t5
     ON t1.idCliente = t5.idCliente
-    AND t4.rn28 = 1
+    AND t5.rn28 = 1
 
     LEFT JOIN tb_cliente_produto_rn AS t6
     ON t1.idCliente = t6.idCliente
-    AND t4.rn14 = 1
+    AND t6.rn14 = 1
 
     LEFT JOIN tb_cliente_produto_rn AS t7
     ON t1.idCliente = t7.idCliente
-    AND t4.rn7 = 1
+    AND t7.rn7 = 1
 
     LEFT JOIN tb_cliente_dia_rn AS t8
     ON t1.idCliente = t8.idCliente
@@ -177,8 +180,11 @@ tb_join AS (
     AND t9.rnPeriodo = 1
 )
 
-SELECT *,
+-- INSERT INTO feature_store_cliente
+
+SELECT '{date}' AS dtRef,
+       *,
        -- Engajamento em D28 versus Vida
        1.0 * qtdeTransacao28 / qtdeTransacoesVida AS engajamento28Vida
 
-FROM tb_join
+FROM tb_join;
